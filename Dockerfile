@@ -10,10 +10,9 @@ COPY . .
 
 RUN go build -ldflags="-s -w" -o sarjan ./cmd/sarjan/main.go
 
-FROM gcr.io/distroless/static-debian12:nonroot
+FROM debian:bookworm-slim
 
 WORKDIR /
 COPY --from=builder /app/sarjan .
 COPY .env .env
-USER nonroot:nonroot
 ENTRYPOINT ["/sarjan"]
