@@ -6,3 +6,9 @@ type Article struct {
 	Content string
 	URL     string
 }
+
+type JudgedArticle struct {
+	Article
+	Score      int
+	FinalScore float64
+}

@@ -17,5 +17,6 @@ func SetConfig(Config *types.Config) error {
 	Config.DatabaseURL = os.Getenv("DATABASE_URL")
 	Config.OllamaURL = os.Getenv("OLLAMA_URL")
 	Config.DiscordWebhookURL = os.Getenv("DISCORD_WEBHOOK_URL")
+	Config.OllamaModel = os.Getenv("LLM_MODEL")
 	return nil
 }

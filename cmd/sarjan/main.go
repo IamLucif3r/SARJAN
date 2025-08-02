@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"log"
 
+	"github.com/gin-gonic/gin"
 	"github.com/iamlucif3r/sarjan/internal/config"
 	"github.com/iamlucif3r/sarjan/internal/database"
 	"github.com/iamlucif3r/sarjan/internal/types"
+	"github.com/iamlucif3r/sarjan/internal/utils"
 	"github.com/iamlucif3r/sarjan/pkg"
 )
 
@@ -36,21 +37,51 @@ func init() {
 
 func main() {
 
-	db := database.DB
+	router := gin.Default()
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "SARJAN : Smart Assistant for Real-time Journey from news to Actionable Narratives",
+		})
+	})
 
-	articles, err := pkg.FetchTopRankedArticles(db, 1)
-	if err != nil {
-		log.Fatalf("Failed to fetch articles: %v", err)
-	}
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "Alive",
+		})
+	})
 
-	ctx := context.Background()
-	// Generate content ideas
-	bundle, err := pkg.GenerateContentIdeas(ctx, articles, *Config)
-	if err != nil {
-		log.Println("Failed to generate content ideas:", err)
+	router.POST("/generate", func(c *gin.Context) {
 
-	}
-	// ToDo: Add a second model for Viral Check.
-	fmt.Println(bundle)
+		log.Println("[INFO] Starting content generation process...")
 
+		db := database.DB
+		ctx := context.Background()
+
+		articles, err := pkg.FetchTopRankedArticles(db, 1)
+		if err != nil {
+			log.Fatalf("Failed to fetch articles: %v", err)
+		}
+		log.Println("[INFO] Fetched ", len(articles), " articles from database")
+
+		bundle, err := pkg.GenerateContentIdeas(ctx, articles, *Config)
+		if err != nil {
+			log.Println("[Error] Failed to generate content ideas:", err)
+
+		}
+		log.Println("[INFO] Generated content ideas successfully")
+		err = utils.GenerateContentIdeasPDF(bundle, "output/content_ideas.pdf")
+		if err != nil {
+			log.Println("Failed to generate PDF:", err)
+		}
+
+		err = utils.SendPDFToDiscord(Config.DiscordWebhookURL, "output/content_ideas.pdf")
+		if err != nil {
+			log.Println("Failed to send Markdown to Discord:", err)
+		} else {
+			log.Println("[Info] Sent content ideas to Discord successfully!")
+		}
+
+	})
+	gin.SetMode(gin.ReleaseMode)
+	router.Run(":4444")
 }
