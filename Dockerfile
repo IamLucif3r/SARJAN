@@ -11,7 +11,10 @@ COPY . .
 RUN go build -ldflags="-s -w" -o sarjan ./cmd/sarjan/main.go
 
 FROM debian:bookworm-slim
-
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    libfontconfig1 \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /
 COPY --from=builder /app/sarjan .
 COPY .env .env
