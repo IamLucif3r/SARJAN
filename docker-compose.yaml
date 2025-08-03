@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  trikaal:
+    container_name: trikaal
+    build:
+      context: ./trikaal
+      dockerfile: Dockerfile-Trikal
+    ports:
+      - "8089:8080"
+    networks:
+      - cyberstack
+
+  sarjan:
+    container_name: sarjan
+    build:
+      context: ./sarjan
+      dockerfile: Dockerfile
+    ports:
+      - "4444:4444"
+    depends_on:
+      - trikaal
+    environment:
+      - SARJAN_ENV=production
+      - TRIKAAL_API_URL=http://localhost:8089
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    networks:
+      - cyberstack
+    volumes:
+      - ./output:/app/output 
+
+networks:
+  cyberstack:
+    driver: bridge
