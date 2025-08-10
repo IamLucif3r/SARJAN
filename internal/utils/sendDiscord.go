@@ -117,16 +117,14 @@ func GenerateContentIdeasPDF(content types.ContentIdeas, filename string) error 
 		}
 	}
 
-	if len(content.LinkedInPosts) > 0 {
+	if content.LinkedInPosts != "" {
 		pdf.SetFont("Arial", "B", 14)
 		pdf.Cell(0, 10, sanitizeText("LinkedIn"))
 		pdf.Ln(8)
 		pdf.SetFont("Arial", "", 12)
 
-		for i, post := range content.LinkedInPosts {
-			pdf.MultiCell(0, 6, sanitizeText(fmt.Sprintf("Post %d:\n%s", i+1, post)), "", "", false)
-			pdf.Ln(3)
-		}
+		pdf.MultiCell(0, 6, sanitizeText(content.LinkedInPosts), "", "", false)
+		pdf.Ln(3)
 	}
 
 	if len(content.TwitterPosts) > 0 || len(content.TwitterThreads) > 0 {

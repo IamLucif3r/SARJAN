@@ -15,7 +15,7 @@ type ContentIdeas struct {
 		Body  []string `json:"body"`
 	} `json:"twitter_threads"`
 
-	LinkedInPosts []string `json:"linkedin_posts"`
+	LinkedInPosts string `json:"linkedin_posts"`
 
 	YouTubeVideoIdeas []struct {
 		Title        string   `json:"title"`
