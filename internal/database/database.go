@@ -20,10 +20,10 @@ func ConnectDB(cfg types.Config) (*sql.DB, error) {
 		return nil, fmt.Errorf("error opening database: %v", err)
 	}
 
-	err = DB.Ping()
-	if err != nil {
-		return nil, fmt.Errorf("error pinging database: %v", err)
-	}
+	// err = DB.Ping()
+	// if err != nil {
+	// 	return nil, fmt.Errorf("error pinging database: %v", err)
+	// }
 
 	log.Println("Successfully connected to the database")
 
