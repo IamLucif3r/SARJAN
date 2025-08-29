@@ -2,7 +2,7 @@
 
 APP_NAME=sarjan
 ENTRYPOINT=cmd/sarjan/main.go
-DOCKER_IMAGE=sarjan:latest
+DOCKER_IMAGE=sarjan:250829
 
 .PHONY: all build run docker clean
 
